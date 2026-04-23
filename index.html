@@ -245,16 +245,116 @@
             .calc-results{position:static;}
         }
 
+
+        /* ── STICKY NAV ── */
+        #sticky-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 8888;
+            background: rgba(249,245,240,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: box-shadow 0.3s ease;
+        }
+        #sticky-nav.scrolled {
+            box-shadow: 0 4px 20px rgba(45,106,79,0.1);
+        }
+        .nav-logo {
+            font-family: 'Noto Serif TC', serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--green);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        html[lang="en"] .nav-logo { font-family: 'Lora', serif; }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+        .nav-links a, .nav-links button {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-2);
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+            transition: color 0.2s ease;
+        }
+        html[lang="en"] .nav-links a,
+        html[lang="en"] .nav-links button { font-family: 'DM Sans', sans-serif; }
+        .nav-links a:hover, .nav-links button:hover { color: var(--green); }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .nav-cta {
+            background: var(--orange);
+            color: white !important;
+            padding: 0.55rem 1.4rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+        .nav-cta:hover {
+            background: var(--orange-dark) !important;
+            transform: translateY(-1px);
+        }
+        /* Push hero down so nav doesn't cover it */
+        .hero { padding-top: 9rem; }
+        @media(max-width:768px) {
+            .nav-links { display: none; }
+            #sticky-nav { padding: 0 1rem; }
+            .hero { padding-top: 6rem; }
+        }
+
     </style>
 </head>
 <body>
 
 <div id="progress-bar"></div>
+
+<nav id="sticky-nav">
+    <a class="nav-logo" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+        🌿 <span data-zh="青銀連線 YouthLink" data-en="青銀連線 YouthLink">青銀連線 YouthLink</span>
+    </a>
+    <ul class="nav-links">
+        <li><button onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth',block:'start'})"><span data-zh="ROI 試算" data-en="ROI Calculator">ROI 試算</span></button></li>
+        <li><button onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth',block:'start'})"><span data-zh="合作方案" data-en="Pricing">合作方案</span></button></li>
+        <li><button onclick="document.getElementById('faq-section').scrollIntoView({behavior:'smooth',block:'start'})"><span data-zh="FAQ" data-en="FAQ">FAQ</span></button></li>
+    </ul>
+    <div class="nav-right">
+        <div id="lang-switcher" style="position:static;box-shadow:none;border:1px solid var(--border);padding:4px;">
+            <button class="lang-btn active" data-lang="zh">中文</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth',block:'start'})">
+            <span data-zh="預約 Demo" data-en="Book a Demo">預約 Demo</span>
+        </button>
+    </div>
+</nav>
+
 <button id="back-to-top" aria-label="返回頂部">↑</button>
-<div id="lang-switcher">
-    <button class="lang-btn active" data-lang="zh">中文</button>
-    <button class="lang-btn" data-lang="en">EN</button>
-</div>
+
 
 <!-- ═══ HERO ═══ -->
 <section class="hero" id="top">
@@ -271,43 +371,12 @@
         <div class="hero-img-wrap" style="max-width:420px;margin:0 auto;position:relative;">
             <video
                 id="hero-video"
-                autoplay
-                muted
-                loop
+                controls
                 playsinline
                 style="width:100%;aspect-ratio:9/16;object-fit:cover;object-position:top center;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);display:block;"
             >
                 <source src="video.mp4" type="video/mp4">
             </video>
-            <!-- Sound toggle button -->
-            <button
-                id="sound-btn"
-                onclick="toggleSound()"
-                style="
-                    position:absolute;
-                    bottom:1rem;
-                    right:1rem;
-                    background:rgba(0,0,0,0.55);
-                    color:white;
-                    border:none;
-                    border-radius:50px;
-                    padding:0.5rem 1rem;
-                    font-size:14px;
-                    font-weight:600;
-                    cursor:pointer;
-                    display:flex;
-                    align-items:center;
-                    gap:0.4rem;
-                    backdrop-filter:blur(6px);
-                    transition:background 0.2s ease;
-                    z-index:10;
-                "
-                onmouseover="this.style.background='rgba(0,0,0,0.75)'"
-                onmouseout="this.style.background='rgba(0,0,0,0.55)'"
-            >
-                <span id="sound-icon">🔇</span>
-                <span id="sound-label">開啟聲音</span>
-            </button>
         </div>
     </div>
 </section>
@@ -711,7 +780,7 @@
 <div class="section-divider"></div>
 
 <!-- ═══ FAQ ═══ -->
-<section class="pad-normal" style="background:white;">
+<section class="pad-normal" style="background:white;" id="faq-section">
     <div class="container">
         <h2 class="section-title t-h2 reveal"><span data-zh="常見問題" data-en="Frequently Asked Questions">常見問題</span></h2>
         <div class="faq-list">
@@ -873,6 +942,12 @@ document.getElementById('contact-form').addEventListener('submit', e => {
 
 
 
+
+/* Nav scroll effect */
+window.addEventListener('scroll', () => {
+    document.getElementById('sticky-nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
 /* ROI Calculator */
 function formatNT(n) {
     return 'NT$' + Math.round(n).toLocaleString('en-US');
@@ -919,25 +994,12 @@ function updateCalc() {
 // Init on load
 updateCalc();
 
-/* Sound toggle */
-function toggleSound() {
-    const video = document.getElementById('hero-video');
-    const icon = document.getElementById('sound-icon');
-    const label = document.getElementById('sound-label');
-    if (video.muted) {
-        video.muted = false;
-        icon.textContent = '🔊';
-        label.textContent = '關閉聲音';
-    } else {
-        video.muted = true;
-        icon.textContent = '🔇';
-        label.textContent = '開啟聲音';
-    }
-}
-
 /* Smooth scroll handled by onclick buttons */
 </script>
 
+
+
 <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="69e9bfa57ca09b600667d327"></script>
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="69e9d8161024ffbe44352572"></script>
 </body>
 </html>
