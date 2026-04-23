@@ -211,6 +211,40 @@
             .final-btns{flex-direction:column;align-items:stretch;}
         }
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}}
+
+        /* ── ROI CALCULATOR ── */
+        .calc-wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;background:white;padding:3rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-md);max-width:1100px;margin:0 auto;}
+        .calc-inputs{display:flex;flex-direction:column;gap:2rem;}
+        .calc-field{display:flex;flex-direction:column;gap:0.5rem;}
+        .calc-label-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+        .calc-label{font-size:clamp(14px,1.8vw,17px);font-weight:600;color:var(--text-1);}
+        .calc-value-display{font-size:clamp(14px,1.8vw,17px);font-weight:700;color:var(--green);white-space:nowrap;}
+        .calc-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer;transition:background 0.2s;}
+        .calc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 2px 8px rgba(45,106,79,0.3);transition:transform 0.15s ease;}
+        .calc-slider::-webkit-slider-thumb:hover{transform:scale(1.2);}
+        .calc-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--green);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(45,106,79,0.3);}
+        .calc-range-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);}
+        .calc-hint{font-size:13px;color:var(--text-3);margin-top:0.25rem;line-height:1.5;}
+        .calc-results{background:var(--cream);padding:2rem;border-radius:var(--radius-md);display:flex;flex-direction:column;gap:0.75rem;position:sticky;top:2rem;}
+        .calc-results-title{font-size:clamp(16px,2vw,20px);font-weight:700;color:var(--green);margin-bottom:0.5rem;font-family:'Noto Serif TC',serif;}
+        html[lang="en"] .calc-results-title{font-family:'Lora',serif;}
+        .calc-result-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+        .calc-result-label{font-size:clamp(13px,1.6vw,16px);color:var(--text-2);}
+        .calc-result-value{font-size:clamp(15px,1.8vw,18px);font-weight:700;color:var(--text-1);text-align:right;}
+        .calc-result-value.muted{color:var(--text-3);}
+        .calc-result-value.green{color:var(--green);}
+        .calc-result-divider{height:1px;background:var(--border);}
+        .calc-roi-box{background:var(--green);border-radius:var(--radius-md);padding:1.5rem;text-align:center;margin-top:0.5rem;}
+        .calc-roi-label{font-size:14px;color:rgba(255,255,255,0.8);margin-bottom:0.5rem;font-weight:600;}
+        .calc-roi-number{font-size:clamp(48px,6vw,72px);font-weight:900;color:var(--orange);font-family:'Noto Serif TC',serif;line-height:1;}
+        html[lang="en"] .calc-roi-number{font-family:'Lora',serif;}
+        .calc-roi-sub{font-size:14px;color:rgba(255,255,255,0.75);margin-top:0.5rem;}
+        .calc-disclaimer{font-size:12px;color:var(--text-3);line-height:1.6;margin-top:0.75rem;text-align:center;}
+        @media(max-width:968px){
+            .calc-wrap{grid-template-columns:1fr;padding:1.5rem;}
+            .calc-results{position:static;}
+        }
+
     </style>
 </head>
 <body>
@@ -541,6 +575,141 @@
 
 <div class="section-divider"></div>
 
+
+<!-- ═══ ROI CALCULATOR ═══ -->
+<section class="pad-major" style="background:var(--cream-dark);" id="calculator">
+    <div class="container">
+        <h2 class="section-title t-h2 reveal">
+            <span data-zh="試算您的投資回報" data-en="Calculate Your ROI">試算您的投資回報</span>
+        </h2>
+        <p class="section-sub t-body reveal">
+            <span data-zh="調整參數，即時看到青銀連線為您降低的理賠成本。" data-en="Adjust the parameters to see your projected claims savings in real time.">調整參數，即時看到青銀連線為您降低的理賠成本。</span>
+        </p>
+
+        <div class="calc-wrap reveal">
+            <!-- INPUTS -->
+            <div class="calc-inputs">
+                <div class="calc-field">
+                    <div class="calc-label-row">
+                        <label class="calc-label">
+                            <span data-zh="納入計畫的保戶人數" data-en="Enrolled Policyholders">納入計畫的保戶人數</span>
+                        </label>
+                        <span class="calc-value-display" id="display-members">1,000 <span data-zh="人" data-en="people">人</span></span>
+                    </div>
+                    <input type="range" id="slider-members" min="100" max="50000" step="100" value="1000" class="calc-slider" oninput="updateCalc()">
+                    <div class="calc-range-labels">
+                        <span>100</span><span>50,000</span>
+                    </div>
+                </div>
+
+                <div class="calc-field">
+                    <div class="calc-label-row">
+                        <label class="calc-label">
+                            <span data-zh="每位保戶月均理賠成本（NT$）" data-en="Avg Monthly Claim per Policyholder (NT$)">每位保戶月均理賠成本（NT$）</span>
+                        </label>
+                        <span class="calc-value-display" id="display-claim">NT$8,000</span>
+                    </div>
+                    <input type="range" id="slider-claim" min="2000" max="30000" step="500" value="8000" class="calc-slider" oninput="updateCalc()">
+                    <div class="calc-range-labels">
+                        <span>NT$2,000</span><span>NT$30,000</span>
+                    </div>
+                </div>
+
+                <div class="calc-field">
+                    <div class="calc-label-row">
+                        <label class="calc-label">
+                            <span data-zh="青銀連線每位保戶月費（NT$）" data-en="YouthLink Monthly Fee per Policyholder (NT$)">青銀連線每位保戶月費（NT$）</span>
+                        </label>
+                        <span class="calc-value-display" id="display-fee">NT$500</span>
+                    </div>
+                    <input type="range" id="slider-fee" min="200" max="2000" step="50" value="500" class="calc-slider" oninput="updateCalc()">
+                    <div class="calc-range-labels">
+                        <span>NT$200</span><span>NT$2,000</span>
+                    </div>
+                </div>
+
+                <div class="calc-field">
+                    <div class="calc-label-row">
+                        <label class="calc-label">
+                            <span data-zh="預估理賠降低率" data-en="Estimated Claim Reduction Rate">預估理賠降低率</span>
+                        </label>
+                        <span class="calc-value-display" id="display-reduction">15%</span>
+                    </div>
+                    <input type="range" id="slider-reduction" min="5" max="30" step="1" value="15" class="calc-slider" oninput="updateCalc()">
+                    <div class="calc-range-labels">
+                        <span>5%</span><span>30%</span>
+                    </div>
+                    <p class="calc-hint">
+                        <span data-zh="💡 NIH 研究顯示社交干預可使住院風險降低 13–30%" data-en="💡 NIH research shows social interventions reduce hospitalization risk by 13–30%">💡 NIH 研究顯示社交干預可使住院風險降低 13–30%</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- RESULTS -->
+            <div class="calc-results">
+                <div class="calc-results-title">
+                    <span data-zh="📊 試算結果" data-en="📊 Estimated Results">📊 試算結果</span>
+                </div>
+
+                <div class="calc-result-row">
+                    <span class="calc-result-label">
+                        <span data-zh="每月節省理賠" data-en="Monthly Claims Saved">每月節省理賠</span>
+                    </span>
+                    <span class="calc-result-value" id="result-saved">NT$1,200,000</span>
+                </div>
+                <div class="calc-result-divider"></div>
+
+                <div class="calc-result-row">
+                    <span class="calc-result-label">
+                        <span data-zh="每月服務費用" data-en="Monthly Service Cost">每月服務費用</span>
+                    </span>
+                    <span class="calc-result-value muted" id="result-cost">NT$500,000</span>
+                </div>
+                <div class="calc-result-divider"></div>
+
+                <div class="calc-result-row">
+                    <span class="calc-result-label">
+                        <span data-zh="每月淨節省" data-en="Monthly Net Saving">每月淨節省</span>
+                    </span>
+                    <span class="calc-result-value green" id="result-net">NT$700,000</span>
+                </div>
+                <div class="calc-result-divider"></div>
+
+                <div class="calc-result-row">
+                    <span class="calc-result-label">
+                        <span data-zh="回收期" data-en="Payback Period">回收期</span>
+                    </span>
+                    <span class="calc-result-value" id="result-payback">—</span>
+                </div>
+                <div class="calc-result-divider"></div>
+
+                <!-- BIG ROI NUMBER -->
+                <div class="calc-roi-box">
+                    <div class="calc-roi-label">
+                        <span data-zh="年化投資回報率" data-en="Annual ROI">年化投資回報率</span>
+                    </div>
+                    <div class="calc-roi-number" id="result-roi">140%</div>
+                    <div class="calc-roi-sub">
+                        <span data-zh="每投入 NT$1，年省 NT$" data-en="For every NT$1 invested, you save NT$">每投入 NT$1，年省 NT$</span>
+                        <span id="result-multiplier">2.4</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="width:100%;margin-top:1.5rem;"
+                    onclick="document.getElementById('contact') && document.getElementById('contact').scrollIntoView({behavior:'smooth',block:'start'})">
+                    <span data-zh="預約 Demo 了解詳細試算" data-en="Book a Demo for a Detailed Analysis">預約 Demo 了解詳細試算</span>
+                </button>
+
+                <p class="calc-disclaimer">
+                    <span data-zh="試算數據僅供參考，實際效益依保單結構與保戶狀況而異。數據來源：NIH、National Academies of Sciences。" data-en="Estimates are for reference only. Actual results depend on policy structure and policyholder profiles. Sources: NIH, National Academies of Sciences.">試算數據僅供參考，實際效益依保單結構與保戶狀況而異。數據來源：NIH、National Academies of Sciences。</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
 <!-- ═══ FAQ ═══ -->
 <section class="pad-normal" style="background:white;">
     <div class="container">
@@ -680,6 +849,7 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
             ? '青銀連線 YouthLink — 為保險公司設計的高齡預防性陪伴方案'
             : '青銀連線 YouthLink — Preventive Companionship for Insurers';
         langBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-lang') === lang));
+        if (typeof updateCalc === 'function') updateCalc();
     }
 
     langBtns.forEach(btn => btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang'))));
@@ -701,6 +871,53 @@ document.getElementById('contact-form').addEventListener('submit', e => {
     alert("感謝您的申請！我們會在 1 個工作天內與您聯繫。\n\nThank you! We'll be in touch within 1 business day.");
 });
 
+
+
+/* ROI Calculator */
+function formatNT(n) {
+    return 'NT$' + Math.round(n).toLocaleString('en-US');
+}
+function updateCalc() {
+    const members   = parseInt(document.getElementById('slider-members').value);
+    const claim     = parseInt(document.getElementById('slider-claim').value);
+    const fee       = parseInt(document.getElementById('slider-fee').value);
+    const reduction = parseInt(document.getElementById('slider-reduction').value) / 100;
+
+    // Update display values
+    document.getElementById('display-members').innerHTML  = members.toLocaleString('en-US') + ' <span data-zh="人" data-en="people">' + (document.documentElement.lang === 'en' ? 'people' : '人') + '</span>';
+    document.getElementById('display-claim').textContent    = formatNT(claim);
+    document.getElementById('display-fee').textContent      = formatNT(fee);
+    document.getElementById('display-reduction').textContent= Math.round(reduction * 100) + '%';
+
+    // Calculate
+    const monthlySaved = members * claim * reduction;
+    const monthlyCost  = members * fee;
+    const monthlyNet   = monthlySaved - monthlyCost;
+    const annualROI    = monthlyCost > 0 ? (monthlyNet * 12) / (monthlyCost * 12) * 100 : 0;
+    const payback      = monthlySaved > 0 ? monthlyCost / monthlySaved : 0;
+    const multiplier   = monthlyCost > 0 ? (monthlySaved / monthlyCost).toFixed(1) : '0';
+
+    // Update results
+    document.getElementById('result-saved').textContent   = formatNT(monthlySaved);
+    document.getElementById('result-cost').textContent    = formatNT(monthlyCost);
+    document.getElementById('result-net').textContent     = formatNT(monthlyNet);
+    document.getElementById('result-roi').textContent     = Math.round(annualROI) + '%';
+    document.getElementById('result-multiplier').textContent = multiplier;
+
+    if (payback > 0 && payback < 12) {
+        const lang = document.documentElement.lang;
+        const unit = lang === 'en' ? ' months' : ' 個月';
+        document.getElementById('result-payback').textContent = payback.toFixed(1) + unit;
+    } else {
+        document.getElementById('result-payback').textContent = '< 1 ' + (document.documentElement.lang === 'en' ? 'month' : '個月');
+    }
+
+    // Color net result
+    const netEl = document.getElementById('result-net');
+    netEl.style.color = monthlyNet >= 0 ? 'var(--green)' : 'var(--orange)';
+}
+// Init on load
+updateCalc();
 
 /* Sound toggle */
 function toggleSound() {
