@@ -234,16 +234,46 @@
                 <button class="btn btn-outline" onclick="document.getElementById('model') && document.getElementById('model').scrollIntoView({behavior:'smooth',block:'start'})"><span data-zh="了解核銷模式" data-en="See How It Works">了解核銷模式</span></button>
             </div>
         </div>
-        <div class="hero-img-wrap" style="max-width:360px;margin:0 auto;">
+        <div class="hero-img-wrap" style="max-width:420px;margin:0 auto;position:relative;">
             <video
+                id="hero-video"
                 autoplay
                 muted
                 loop
                 playsinline
-                style="width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);display:block;"
+                style="width:100%;aspect-ratio:1/1;object-fit:cover;object-position:top left;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);display:block;"
             >
                 <source src="video.mp4" type="video/mp4">
             </video>
+            <!-- Sound toggle button -->
+            <button
+                id="sound-btn"
+                onclick="toggleSound()"
+                style="
+                    position:absolute;
+                    bottom:1rem;
+                    right:1rem;
+                    background:rgba(0,0,0,0.55);
+                    color:white;
+                    border:none;
+                    border-radius:50px;
+                    padding:0.5rem 1rem;
+                    font-size:14px;
+                    font-weight:600;
+                    cursor:pointer;
+                    display:flex;
+                    align-items:center;
+                    gap:0.4rem;
+                    backdrop-filter:blur(6px);
+                    transition:background 0.2s ease;
+                    z-index:10;
+                "
+                onmouseover="this.style.background='rgba(0,0,0,0.75)'"
+                onmouseout="this.style.background='rgba(0,0,0,0.55)'"
+            >
+                <span id="sound-icon">🔇</span>
+                <span id="sound-label">開啟聲音</span>
+            </button>
         </div>
     </div>
 </section>
@@ -670,6 +700,23 @@ document.getElementById('contact-form').addEventListener('submit', e => {
     e.preventDefault();
     alert("感謝您的申請！我們會在 1 個工作天內與您聯繫。\n\nThank you! We'll be in touch within 1 business day.");
 });
+
+
+/* Sound toggle */
+function toggleSound() {
+    const video = document.getElementById('hero-video');
+    const icon = document.getElementById('sound-icon');
+    const label = document.getElementById('sound-label');
+    if (video.muted) {
+        video.muted = false;
+        icon.textContent = '🔊';
+        label.textContent = '關閉聲音';
+    } else {
+        video.muted = true;
+        icon.textContent = '🔇';
+        label.textContent = '開啟聲音';
+    }
+}
 
 /* Smooth scroll handled by onclick buttons */
 </script>
